@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Электрика в цифрах — калькуляторы для электромонтажа</title>
+<meta name="description" content="Бесплатные калькуляторы для электриков и студентов: закон Ома, сечение кабеля и автомат, падение напряжения, выбор УЗО, нагрузка квартиры, шпаргалка по маркировке проводов и интересные факты.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<link rel="canonical" href="https://elektrikavtsifrah.ru/">
+<meta property="og:url" content="https://elektrikavtsifrah.ru/">
+<meta property="og:image" content="https://elektrikavtsifrah.ru/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:title" content="Электрика в цифрах">
+<meta property="og:description" content="Калькуляторы и шпаргалки для электромонтажа. Бесплатно и без регистрации.">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+
+
+<style>
+:root{
+  --bg:#f1f3f2; --surface:#ffffff; --ink:#1b2430; --muted:#5b6673; --line:#d3d9de;
+  --blue:#2f6db5; --brown:#7a4b2a; --yellow:#f2c230; --green:#2e8b57; --calc:#e8f0fa;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#12171d; --surface:#1b222b; --ink:#e8edf1; --muted:#9aa6b2; --line:#2e3944; --blue:#6aa5ea; --brown:#c28a5f; --calc:#1f2d40;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12171d; --surface:#1b222b; --ink:#e8edf1; --muted:#9aa6b2; --line:#2e3944; --blue:#6aa5ea; --brown:#c28a5f; --calc:#1f2d40;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 Onest,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+.pe{height:12px;background:repeating-linear-gradient(135deg,var(--yellow) 0 14px,var(--green) 14px 28px)}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+header{padding:56px 0 36px}
+h1{font:700 clamp(30px,6vw,56px)/1.08 Unbounded,Onest,system-ui,sans-serif;margin:0 0 18px;letter-spacing:-.01em;max-width:16ch}
+header p{max-width:52ch;color:var(--muted);margin:0}
+h2{font:500 clamp(22px,3.4vw,30px)/1.2 Unbounded,Onest,system-ui,sans-serif;margin:0 0 8px}
+section{padding:32px 0}
+.lead{color:var(--muted);margin:0 0 24px;max-width:60ch}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+label{display:block;font-weight:500;margin-bottom:6px}
+label small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:4px;padding:10px 12px;min-height:46px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+input.calc{background:var(--calc);border-color:var(--blue);font-weight:700}
+.grid>div{display:flex;flex-direction:column}
+.grid>div>label{flex:1 0 auto}
+.grid input,.grid select{height:48px}
+.hint{margin:16px 0 0;color:var(--muted);font-size:15px}
+.formula{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0 0 20px;font:500 15px Unbounded,Onest,sans-serif;color:var(--brown)}
+button{font:inherit;font-weight:500;cursor:pointer;color:var(--ink);background:transparent;border:2px solid var(--ink);border-radius:4px;padding:8px 16px;min-height:44px;margin-top:16px}
+button:hover{background:var(--ink);color:var(--bg)}
+.result{margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
+.result div{border-left:6px solid var(--blue);padding:4px 0 4px 14px}
+.result div:nth-child(2){border-color:var(--brown)}
+.result div:nth-child(3){border-color:var(--green)}
+.result b{display:block;overflow-wrap:anywhere;font:700 28px/1.2 Unbounded,Onest,sans-serif}
+.result span{color:var(--muted);font-size:15px}
+.note{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--yellow);border-radius:4px;padding:16px 20px;margin-top:24px;font-size:15px;color:var(--muted)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.fact{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--yellow);border-radius:4px;padding:18px;margin:0}
+table{border-collapse:collapse;width:100%}
+@media(max-width:600px){thead{display:none}table,tbody,tr,td{display:block;width:100%}tr{padding:10px 0;border-bottom:1px solid var(--line)}table td{border:0;padding:2px 0}td:first-child{font-weight:700}}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.sw{display:inline-block;width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-right:4px;border:1px solid var(--line)}
+.sw.pe{height:20px;background:repeating-linear-gradient(135deg,var(--yellow) 0 5px,var(--green) 5px 10px)}
+dl{margin:0}dt{font-weight:700;margin-top:12px}dd{margin:2px 0 0;color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
+.links a{display:inline-flex;align-items:center;min-height:46px;padding:8px 20px;border:2px solid var(--ink);border-radius:4px;color:var(--ink);font-weight:500;text-decoration:none}
+.links a:hover{background:var(--ink);color:var(--bg)}
+.links a:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.links a.main{background:var(--yellow);border-color:var(--yellow);color:#1b2430}
+.logo{display:block;width:72px;height:72px;margin-bottom:20px}
+.tochead{margin:0 0 10px;font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.links.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:8px;grid-auto-rows:1fr;counter-reset:t;margin:0 0 16px}
+.toc a{justify-content:flex-start;min-height:44px;padding:6px 12px;font-size:15px;line-height:1.25;background:var(--surface);border-color:var(--line)}
+.toc a::before{counter-increment:t;content:counter(t,decimal-leading-zero);flex:none;width:2ch;margin-right:10px;font-size:13px;font-weight:700;color:var(--brown)}
+.toc a:hover::before{color:inherit}
+@media(max-width:600px){.links.toc{grid-template-columns:1fr 1fr;gap:6px}.toc a{font-size:14px;padding:6px 8px}.toc a::before{margin-right:6px}}
+footer{padding:32px 0 104px;color:var(--muted);font-size:14px}
+.dock{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;gap:10px}
+.cp{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:50;width:min(300px,calc(100vw - 32px));padding:12px;background:var(--surface);border:2px solid var(--ink);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.cp[hidden]{display:none}
+.ch{min-height:20px;margin-top:8px;text-align:right;font-size:13px;color:var(--muted)}
+.cd{text-align:right;font-weight:700;font-size:30px;line-height:1.2;padding:2px 4px 10px;overflow-x:auto;white-space:nowrap}
+.ck{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ck button{margin:0;min-height:48px;padding:0;font-size:18px;font-weight:500;background:var(--bg);border:2px solid var(--line)}
+.ck button.op{background:var(--calc);border-color:var(--blue)}
+.ck button.eq{background:var(--yellow);color:#1b2430;border-color:var(--yellow)}
+.ck button:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.nb{margin:0;min-height:48px;padding:10px 18px;border-radius:999px;border:2px solid var(--ink);background:var(--yellow);color:#1b2430;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.nb:hover{background:var(--ink);color:var(--bg)}
+@media(max-width:480px){.dock{gap:8px}.nb{padding:10px 14px;font-size:14px}}
+.np{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:50;width:min(380px,calc(100vw - 32px));display:flex;flex-direction:column;gap:8px;padding:12px;background:var(--surface);border:2px solid var(--ink);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.np[hidden]{display:none}
+.nh{display:flex;justify-content:space-between;align-items:center}
+.nh button,.nf button{margin:0;min-height:36px;padding:4px 12px;font-size:14px}
+#ntext{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:4px;padding:10px 12px;height:min(40vh,320px);min-height:160px;resize:vertical;line-height:1.45}
+.nf{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+footer p{margin:0 0 10px;max-width:72ch}
+</style>
+</head>
+<body>
+<div class="pe" aria-hidden="true"></div>
+<div class="wrap">
+  <header>
+    <h1>Электрика в цифрах</h1>
+    <p>Калькуляторы и шпаргалки для учёбы и практики: закон Ома, сечение кабеля, падение напряжения, выбор УЗО и маркировка проводов. Считают сразу, пока вы вводите числа.</p>
+  </header>
+  <p class="tochead">Содержание</p>
+  <nav class="links toc" aria-label="Содержание">
+    <a href="#ohm">Закон Ома</a>
+    <a href="#cab">Сечение кабеля</a>
+    <a href="#vd">Падение напряжения</a>
+    <a href="#uzo">Выбор УЗО</a>
+    <a href="#mk" id="tmk">Маркировка</a>
+    <a href="#fh">Факты</a>
+    <a href="#sup">Поддержать</a>
+  </nav>
+
+
+
+  <section aria-labelledby="ohm">
+    <h2 id="ohm">Закон Ома и мощность</h2>
+    <p class="lead">Введите любые два значения, остальные два посчитаются сами. Рассчитанные поля подсвечены синим.</p>
+    <div class="panel">
+      <div class="formula"><span>I = U / R</span><span>P = U · I</span><span>P = I² · R</span><span>P = U² / R</span></div>
+      <div class="grid">
+        <div><label for="u">Напряжение U <small>вольты, В</small></label><input id="u" data-k="u" type="number" inputmode="decimal" min="0" step="any" placeholder="230"></div>
+        <div><label for="i">Ток I <small>амперы, А</small></label><input id="i" data-k="i" type="number" inputmode="decimal" min="0" step="any" placeholder="10"></div>
+        <div><label for="r">Сопротивление R <small>омы, Ом</small></label><input id="r" data-k="r" type="number" inputmode="decimal" min="0" step="any" placeholder="23"></div>
+        <div><label for="p">Мощность P <small>ватты, Вт</small></label><input id="p" data-k="p" type="number" inputmode="decimal" min="0" step="any" placeholder="2300"></div>
+      </div>
+      <button type="button" id="reset">Очистить</button>
+      <p class="hint" id="ohmHint">Заполните два поля, например U и R.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="cab">
+    <h2 id="cab">Сечение кабеля и автомат</h2>
+    <p class="lead">Медный кабель, скрытая прокладка. Укажите нагрузку, и калькулятор подберёт сечение жилы и номинал автоматического выключателя.</p>
+    <div class="panel">
+      <div class="grid">
+        <div><label for="kw">Мощность нагрузки <small>киловатты, кВт</small></label><input id="kw" type="number" inputmode="decimal" min="0" step="any" value="3.5"></div>
+        <div><label for="net">Сеть</label>
+          <select id="net"><option value="1">Однофазная, 230 В</option><option value="3">Трёхфазная, 400 В</option></select></div>
+        <div><label for="cos">Коэффициент мощности <small>cos φ; для ТЭНов и ламп накаливания 1</small></label><input id="cos" type="number" inputmode="decimal" min="0.1" max="1" step="0.01" value="1"></div>
+      </div>
+      <div class="result" aria-live="polite">
+        <div><b id="rI">—</b><span>расчётный ток</span></div>
+        <div><b id="rS">—</b><span>сечение жилы</span></div>
+        <div><b id="rA">—</b><span>автомат</span></div>
+      </div>
+      <p class="note">Учебный расчёт по типовому соответствию сечения и автомата (медь, скрытая проводка, один кабель). Для реального объекта учитывайте длину линии, падение напряжения, способ прокладки и требования ПУЭ.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="vd">
+    <h2 id="vd">Падение напряжения на линии</h2>
+    <p class="lead">Чем длиннее линия и тоньше жила, тем больше напряжения теряется по пути. Длина считается в одну сторону.</p>
+    <div class="panel">
+      <div class="grid">
+        <div><label for="vI">Ток нагрузки <small>амперы, А</small></label><input id="vI" type="number" inputmode="decimal" min="0" step="any" value="16"></div>
+        <div><label for="vL">Длина линии <small>метры, м</small></label><input id="vL" type="number" inputmode="decimal" min="0" step="any" value="40"></div>
+        <div><label for="vS">Сечение жилы</label><select id="vS"><option>1.5</option><option selected>2.5</option><option>4</option><option>6</option><option>10</option><option>16</option><option>25</option><option>35</option></select></div>
+        <div><label for="vM">Материал</label><select id="vM"><option value="0.0175">Медь</option><option value="0.028">Алюминий</option></select></div>
+        <div><label for="vN">Сеть</label><select id="vN"><option value="1">230 В, однофазная</option><option value="3">400 В, трёхфазная</option></select></div>
+      </div>
+      <div class="result" aria-live="polite">
+        <div><b id="vDU">—</b><span>потеря напряжения</span></div>
+        <div><b id="vP">—</b><span>от номинала сети</span></div>
+        <div><b id="vV">—</b><span>вывод</span></div>
+      </div>
+      <p class="note">Формула: ΔU = 2 · I · L · ρ / S для однофазной линии и √3 · I · L · ρ / S для трёхфазной (cos φ принят за 1). Для большинства линий ориентир — потеря не более 5 %.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="uzo">
+    <h2 id="uzo">Выбор УЗО</h2>
+    <p class="lead">Укажите, что защищает УЗО, и ток автомата на этой линии.</p>
+    <div class="panel">
+      <div class="grid">
+        <div><label for="zZ">Что защищаем</label><select id="zZ"><option value="room">Розетки в комнатах</option><option value="wet">Ванная, кухня, улица</option><option value="tech">Стиральная машина, плита, посудомойка</option><option value="intro">Вводной щит, противопожарная защита</option></select></div>
+        <div><label for="zA">Ток автомата <small>амперы, А</small></label><input id="zA" type="number" inputmode="decimal" min="1" step="any" value="16"></div>
+      </div>
+      <div class="result" aria-live="polite">
+        <div><b id="zN">—</b><span>номинальный ток УЗО</span></div>
+        <div><b id="zT">—</b><span>ток утечки</span></div>
+        <div><b id="zY">—</b><span>тип</span></div>
+      </div>
+      <p class="note">Номинал УЗО берут не ниже тока автомата перед ним. Ток утечки 30 мА защищает людей, 100–300 мА защищает от пожара из-за утечки на землю. Окончательный выбор делайте по проекту и ПУЭ.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="mk">
+    <h2 id="mk">Шпаргалка по маркировке</h2>
+    <p class="lead">Цвета жил по ГОСТ и расшифровка популярных марок кабеля.</p>
+    <div class="panel">
+      <div class="tw"><table>
+        <thead><tr><th>Жила</th><th>Назначение</th><th>Цвет изоляции</th></tr></thead>
+        <tbody>
+          <tr><td>L</td><td>Фаза</td><td><span class="sw" style="background:#7a4b2a"></span><span class="sw" style="background:#111"></span><span class="sw" style="background:#9a9a9a"></span> коричневый, чёрный или серый</td></tr>
+          <tr><td>N</td><td>Рабочий ноль</td><td><span class="sw" style="background:#2f6db5"></span> синий или голубой</td></tr>
+          <tr><td>PE</td><td>Защитное заземление</td><td><span class="sw pe"></span> жёлто-зелёный</td></tr>
+          <tr><td>PEN</td><td>Совмещённый ноль и земля</td><td><span class="sw pe"></span> жёлто-зелёный с синими метками на концах</td></tr>
+        </tbody>
+      </table></div>
+      <dl>
+        <dt>ВВГнг(А)-LS 3×2,5</dt>
+        <dd>В: виниловая изоляция. В: виниловая оболочка. Г: нет защитного покрова, «голый». нг: не поддерживает горение при групповой прокладке. LS: мало дыма и газа при горении. 3×2,5: три жилы по 2,5 мм².</dd>
+        <dt>ПВС</dt><dd>Гибкий шнур с виниловой изоляцией для подключения приборов, удлинителей, светильников.</dd>
+        <dt>ПВ-1 и ПВ-3</dt><dd>Монтажные провода в ПВХ-изоляции. Цифра показывает жилу: 1 однопроволочная, 3 гибкая.</dd>
+        <dt>NYM</dt><dd>Импортный кабель, близкий по назначению к ВВГ, для скрытой и открытой проводки внутри помещений.</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section aria-labelledby="fh">
+    <h2 id="fh">Три факта напоследок</h2>
+    <p class="lead">При каждом заходе на сайт набор новый.</p>
+    <div class="facts" id="facts" aria-live="polite"></div>
+    <button type="button" id="more">Другие факты</button>
+  </section>
+
+  <section aria-labelledby="sup">
+    <h2 id="sup">Поддержать автора или предложить новую идею</h2>
+    <p class="lead">Сайт бесплатный и развивается по вашим пожеланиям. Нужен новый калькулятор или раздел? Напишите в Telegram, а если сайт помог, можно поддержать автора донатом на любую сумму, которую вы выберете сами.</p>
+    <div class="links">
+      <a class="main" href="https://yoomoney.ru/to/4100119665847522" target="_blank" rel="noopener">Поддержать через ЮMoney</a>
+      <a href="https://t.me/ElectricaVTsifrah" target="_blank" rel="noopener">Telegram-канал</a>
+      
+    </div>
+  </section>
+
+  <footer><p>Сайт носит справочный и учебный характер. Расчёты и факты не заменяют проект и требования ПУЭ, ГОСТ и строительных норм. Работы в электроустановках должен выполнять квалифицированный специалист. Автор не несёт ответственности за последствия использования расчётов.</p><p>Сайт не использует cookie и счётчики аналитики, не собирает личные данные через формы. Данные в калькуляторах не сохраняются и никуда не отправляются. Заметки хранятся только в вашем браузере и на сервер не отправляются.</p><p>Создано с помощью Claude.</p></footer>
+</div>
+<div class="pe" aria-hidden="true"></div>
+
+<script>
+(function(){
+  var keys=['u','i','r','p'], el={}, touched=[];
+  keys.forEach(function(k){el[k]=document.getElementById(k)});
+  var hint=document.getElementById('ohmHint');
+  var units={u:'В',i:'А',r:'Ом',p:'Вт'};
+
+  function fmt(x){
+    if(!isFinite(x)) return '';
+    var a=Math.abs(x);
+    return String(a>=100?Math.round(x*100)/100:a>=1?Math.round(x*1000)/1000:Math.round(x*100000)/100000);
+  }
+  function solve(a,b,v){
+    var s=[a,b].sort().join(''), A=v[a], B=v[b], o={};
+    if(s==='iu'){o.r=v.u/v.i;o.p=v.u*v.i}
+    else if(s==='ru'){o.i=v.u/v.r;o.p=v.u*v.u/v.r}
+    else if(s==='pu'){o.i=v.p/v.u;o.r=v.u*v.u/v.p}
+    else if(s==='ir'){o.u=v.i*v.r;o.p=v.i*v.i*v.r}
+    else if(s==='ip'){o.u=v.p/v.i;o.r=v.p/(v.i*v.i)}
+    else if(s==='pr'){o.u=Math.sqrt(v.p*v.r);o.i=Math.sqrt(v.p/v.r)}
+    return o;
+  }
+  function update(){
+    keys.forEach(function(k){ if(touched.indexOf(k)<0){el[k].value='';} el[k].classList.remove('calc'); });
+    if(touched.length<2){hint.textContent='Заполните два поля, например U и R.';return}
+    var v={};
+    touched.forEach(function(k){v[k]=parseFloat(el[k].value)});
+    if(touched.some(function(k){return !(v[k]>0)})){hint.textContent='Значения должны быть больше нуля.';return}
+    var out=solve(touched[0],touched[1],v);
+    Object.keys(out).forEach(function(k){el[k].value=fmt(out[k]);el[k].classList.add('calc')});
+    hint.textContent='Готово: рассчитанные значения выделены синим. Измените любое поле, чтобы пересчитать.';
+  }
+  keys.forEach(function(k){
+    el[k].addEventListener('input',function(){
+      var i=touched.indexOf(k); if(i>=0) touched.splice(i,1);
+      if(el[k].value!==''){touched.push(k); if(touched.length>2) touched.shift();}
+      update();
+    });
+  });
+  document.getElementById('reset').addEventListener('click',function(){touched=[];update();});
+  update();
+
+  var kw=document.getElementById('kw'), net=document.getElementById('net'), cos=document.getElementById('cos');
+  var table=[[1.5,10],[2.5,16],[4,25],[6,32],[10,50],[16,63]];
+  var breakers=[6,10,16,20,25,32,40,50,63];
+  function calc(){
+    var P=parseFloat(kw.value)*1000, c=parseFloat(cos.value), ph=net.value==='3';
+    var rI=document.getElementById('rI'), rS=document.getElementById('rS'), rA=document.getElementById('rA');
+    if(!(P>0)||!(c>0&&c<=1)){rI.textContent=rS.textContent=rA.textContent='—';return}
+    var I=ph?P/(Math.sqrt(3)*400*c):P/(230*c);
+    rI.textContent=fmt(Math.round(I*10)/10)+' А';
+    var s=table.find(function(r){return r[1]>=I});
+    var b=breakers.find(function(x){return x>=I});
+    if(!s||!b){rS.textContent=rA.textContent='больше 63 А';return}
+    // автомат не должен превышать допустимый ток кабеля
+    s=table.find(function(r){return r[1]>=b})||s;
+    rS.textContent=s[0]+' мм²';
+    rA.textContent=b+' А';
+  }
+  [kw,net,cos].forEach(function(x){x.addEventListener('input',calc)});
+  calc();
+
+  var vi=['vI','vL','vS','vM','vN'].map(function(id){return document.getElementById(id)});
+  function drop(){
+    var I=parseFloat(vi[0].value), L=parseFloat(vi[1].value), S=parseFloat(vi[2].value), rho=parseFloat(vi[3].value), ph=vi[4].value==='3';
+    var a=document.getElementById('vDU'), b=document.getElementById('vP'), c=document.getElementById('vV');
+    if(!(I>0)||!(L>0)){a.textContent=b.textContent=c.textContent='—';return}
+    var dU=(ph?Math.sqrt(3):2)*I*L*rho/S, pc=dU/(ph?400:230)*100;
+    a.textContent=fmt(Math.round(dU*100)/100)+' В';
+    b.textContent=fmt(Math.round(pc*100)/100)+' %';
+    c.textContent=pc<=5?'норма':'взять сечение больше';
+  }
+  vi.forEach(function(x){x.addEventListener('input',drop)}); drop();
+
+  var zz=document.getElementById('zZ'), za=document.getElementById('zA');
+  var zinfo={room:['30 мА','AC или A'],wet:['30 мА','A'],tech:['30 мА','A'],intro:['100–300 мА','S, селективное']};
+  function rcd(){
+    var I=parseFloat(za.value), n=document.getElementById('zN');
+    if(!(I>0)){n.textContent=document.getElementById('zT').textContent=document.getElementById('zY').textContent='—';return}
+    var s=[16,25,32,40,63,80,100].find(function(x){return x>=I});
+    n.textContent=s?s+' А':'больше 100 А';
+    document.getElementById('zT').textContent=zinfo[zz.value][0];
+    document.getElementById('zY').textContent=zinfo[zz.value][1];
+  }
+  [zz,za].forEach(function(x){x.addEventListener('input',rcd)}); rcd();
+
+  var F=[
+  "Молния нагревает воздух вокруг себя примерно до 30 000 °C. Это в несколько раз горячее поверхности Солнца.",
+  "Электроны в проводе дрейфуют со скоростью долей миллиметра в секунду, но электрический сигнал бежит по проводу почти со скоростью света.",
+  "Слово «электричество» произошло от греческого слова «электрон», то есть «янтарь»: потёртый о шерсть янтарь притягивает лёгкие предметы.",
+  "В розетках США 120 В, в Европе и России 230 В, а в Японии 100 В. При этом в Японии в разных частях страны разная частота сети: 50 и 60 Гц.",
+  "Птицы спокойно сидят на проводах под напряжением, потому что касаются одного провода: между лапами почти нет разности потенциалов.",
+  "«Столетняя лампа» в пожарной части города Ливермор в Калифорнии светит почти непрерывно с 1901 года.",
+  "Электрический угорь способен выдать разряд около 860 В.",
+  "Ток около 30 мА через грудную клетку уже опасен для жизни. Именно поэтому для защиты людей выбирают УЗО на 30 мА.",
+  "«Война токов» конца 1880-х: Эдисон отстаивал постоянный ток, а Тесла и Вестингауз победили с переменным.",
+  "Вольт, ампер, ом и ватт названы в честь учёных: Вольты, Ампера, Ома и Уатта.",
+  "Серебро проводит ток лучше всех металлов, медь на втором месте, но медь намного дешевле, поэтому провода делают из неё.",
+  "Контакты покрывают золотом не из-за лучшей проводимости, а потому что оно не окисляется и контакт остаётся чистым годами.",
+  "Алюминий проводит ток примерно в 1,6 раза хуже меди, поэтому алюминиевая жила должна быть толще при том же токе.",
+  "Сеть 50 Гц означает, что переменный ток меняет направление 100 раз в секунду.",
+  "Расчёсываясь в сухую погоду, можно набрать статическое напряжение в тысячи вольт. Опасности нет: запасённая энергия очень мала.",
+  "Одна из самых мощных в мире линий электропередачи Чанцзи — Гучуань в Китае работает на постоянном токе ±1100 кВ.",
+  "Электрон открыл Джозеф Джон Томсон в 1897 году.",
+  "План ГОЭЛРО, принятый в 1920 году, положил начало электрификации России. Тогда же появилось выражение «лампочка Ильича».",
+  "За один час Земля получает от Солнца больше энергии, чем всё человечество расходует за год.",
+  "Лампа на 60 Вт в сети 230 В потребляет ток около 0,26 А, а электрочайник на 2 кВт примерно 8,7 А.",
+  "Лампа накаливания превращает в свет лишь несколько процентов энергии, остальное уходит в тепло. Светодиодная лампа даёт тот же свет в 5–10 раз экономнее.",
+  "На Земле происходит около 100 ударов молнии в землю каждую секунду.",
+  "Бенджамин Франклин в 1750-х годах предложил громоотвод, и здания перестали гореть от молний так часто.",
+  "Сверхпроводимость открыл Хейке Камерлинг-Оннес в 1911 году: у ртути сопротивление пропало почти до нуля при температуре около −269 °C.",
+  "«Вольтов столб» 1800 года был первой химической батареей, дававшей постоянный ток.",
+  "Если поднять напряжение в линии в 10 раз, потери на нагрев проводов при той же мощности упадут в 100 раз. Поэтому ЛЭП работают на высоких напряжениях.",
+  "Воздух пробивается током при напряжении около 3 кВ на миллиметр зазора в сухую погоду.",
+  "В 1820 году Ханс Эрстед заметил, что ток отклоняет стрелку компаса. Так связали электричество и магнетизм.",
+  "Автоматы защищают линию от короткого замыкания за сотые доли секунды, пока провода не успели перегреться.",
+  "Мозг человека потребляет около 20 Вт, примерно как маломощная лампочка.",
+  "Сердце сокращается по электрическим импульсам, а ЭКГ записывает именно их.",
+  "Жёлто-зелёный цвет защитного провода выбрали за заметность: сочетание трудно спутать с другими жилами.",
+  "Во всей Европе принят единый цвет нулевой жилы: синий.",
+  "Провод нагревается из-за собственного сопротивления. Поэтому сечение подбирают по току, а не по напряжению.",
+  "Удлинитель, смотанный в катушку, греется сильнее: тепло хуже уходит из витков.",
+  "У осьминога три сердца, и два из них качают кровь только через жабры.",
+  "Сутки на Венере длиннее её года: оборот вокруг оси занимает около 243 земных суток, а год около 225.",
+  "Летом Эйфелева башня становится выше до 15 см из-за теплового расширения металла.",
+  "Бананы слабо радиоактивны из-за изотопа калий-40, но это совершенно безопасно.",
+  "«Вольтов столб» собрали из чередующихся дисков цинка и меди, между которыми лежала ткань, смоченная солёной водой.",
+  "Если в тёмной комнате снять шерстяной свитер, слышен треск и видны крошечные искры: это разряд статического электричества.",
+  "Первая электростанция Эдисона на Перл-стрит в Нью-Йорке заработала в 1882 году и снабжала током часть Манхэттена.",
+  "Русский изобретатель Александр Ладыгин в 1870-х создал лампу накаливания с угольным стержнем.",
+  "«Свеча Яблочкова» 1876 года была дуговой лампой без регулятора, и ею освещали улицы Парижа.",
+  "Михаил Доливо-Добровольский в 1889 году построил первый трёхфазный асинхронный двигатель, и трёхфазные сети используют до сих пор.",
+  "В трёхфазной сети между фазами 400 В, а между фазой и нулём 230 В, потому что 400 делится на корень из трёх.",
+  "Если нагрузка на все три фазы одинакова, ток в нулевом проводе почти равен нулю.",
+  "Предохранитель — простейшая защита: тонкий проводник, который плавится при слишком большом токе и размыкает цепь.",
+  "Автомат с характеристикой B мгновенно срабатывает при токе в 3–5 раз выше номинального, C — в 5–10 раз, D — в 10–20 раз.",
+  "Сверхнизкое напряжение 12 и 36 В применяют там, где риск особенно высок: в сырых помещениях и внутри металлических ёмкостей.",
+  "В старых телеграфных линиях обратным проводом служила сама земля.",
+  "Чистая дистиллированная вода почти не проводит ток: его переносят ионы солей, растворённых в обычной воде.",
+  "Сопротивление сухой кожи — сотни килоом, а мокрой может падать примерно до килоома, поэтому в ванной ток особенно опасен.",
+  "Спирали чайников и утюгов делают из нихрома: этот сплав никеля и хрома сильно сопротивляется току и не боится нагрева.",
+  "Вольфрам в лампах накаливания плавится при температуре около 3400 °C — это самая высокая температура плавления среди металлов.",
+  "Светодиод изобрёл Олег Лосев в 1920-х годах, наблюдая свечение кристаллов карборунда.",
+  "Индукционная плита греет саму посуду вихревыми токами, а её стеклокерамическая панель почти не нагревается.",
+  "Трансформатор не работает на постоянном токе: для него нужен меняющийся магнитный поток.",
+  "В 1831 году Майкл Фарадей открыл электромагнитную индукцию, и на этом принципе работают все генераторы.",
+  "Самая мощная в мире ГЭС «Три ущелья» в Китае даёт около 22,5 ГВт.",
+  "Солнечная панель вырабатывает постоянный ток, поэтому для подключения к сети нужен инвертор.",
+  "Электромобиль при торможении возвращает часть энергии в батарею: мотор работает как генератор.",
+  "Номинальное напряжение одной ячейки литий-ионного аккумулятора в смартфоне — около 3,7 В.",
+  "Розетку «Шуко» с заземляющими контактами запатентовали в Германии в 1926 году.",
+  "Александр Попов продемонстрировал свой радиоприёмник 7 мая 1895 года, и этот день отмечают как День радио.",
+  "Первый телефонный разговор состоялся в 1876 году благодаря Александру Беллу.",
+  "Звук не распространяется в вакууме, а электромагнитные волны, включая свет и радио, летят и там.",
+  "Свет от Солнца добирается до Земли примерно за восемь минут.",
+  "У жирафа в шее семь позвонков — столько же, сколько у человека.",
+  "За жизнь человеческое сердце сокращается примерно три миллиарда раз.",
+  "Правило безопасности: выключатель не гарантирует, что в патроне нет напряжения. Если он стоит в разрыве нуля, а не фазы, патрон остаётся под напряжением, поэтому перед работой его проверяют указателем напряжения.",
+  "Правило безопасности: исправность указателя напряжения проверяют на заведомо работающей цепи и до, и после проверки отключённой линии. Иначе сломанный индикатор покажет «нет напряжения» даже на живом проводе.",
+  "Правило безопасности: у упавшего на землю провода нельзя бежать. Между ногами возникает шаговое напряжение, поэтому выходят мелкими шагами, не отрывая ступни друг от друга, и стараются не подходить к проводу ближе 8 метров.",
+  "Правило безопасности: горящий электроприбор нельзя тушить водой, пока он под напряжением. Сначала отключают питание, а до этого пользуются углекислотным или порошковым огнетушителем.",
+  "Правило безопасности: при поражении током сначала нужно обестоячить пострадавшего или оттолкнуть провод сухой непроводящей палкой. Если схватить человека голыми руками, ток пойдёт и через вас.",
+  "Правило безопасности: ток около 10 мА и больше может свести мышцы руки так, что человек не сможет сам разжать пальцы. Такой ток называют неотпускающим.",
+  "Правило безопасности: проверяя оборудование, электрики часто работают одной рукой, а вторую держат в стороне. Так ток не пройдёт через грудную клетку по пути «рука — рука».",
+  "Правило безопасности: после отключения прибора конденсаторы могут хранить заряд. Особенно опасен высоковольтный конденсатор в микроволновке: его заряд опасен даже у выключенной печи.",
+  "Правило безопасности: нельзя «занулять» розетку, то есть соединять перемычкой контакты нуля и земли. При обрыве нуля фаза попадёт на корпус прибора.",
+  "Правило безопасности: медный и алюминиевый провода нельзя просто скручивать. В месте контакта идёт коррозия и растёт нагрев, поэтому их соединяют через специальные клеммы.",
+  "Правило безопасности: если автомат часто отключается, поставить автомат на больший ток нельзя. Он защищает проводку от перегрева, а частое срабатывание означает, что нужно искать причину.",
+  "Правило безопасности: на отключённый автомат перед работой вешают табличку «Не включать! Работают люди» или блокируют его, чтобы никто не подал напряжение, пока вы работаете."
+  ];
+  var fe=document.getElementById('facts'), cur=[];
+  function show(){
+    var pool=F.map(function(t,i){return i}).filter(function(i){return cur.indexOf(i)<0});
+    for(var k=pool.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1)),t=pool[k];pool[k]=pool[j];pool[j]=t}
+    cur=pool.slice(0,3); fe.textContent='';
+    cur.forEach(function(i){var p=document.createElement('p');p.className='fact';p.textContent=F[i];fe.appendChild(p)});
+  }
+  document.getElementById('more').addEventListener('click',show);
+  show();
+  var D=['чёрный','коричневый','красный','оранжевый','жёлтый','зелёный','синий','фиолетовый','серый','белый'];
+  function fr(r){return r>=1e6?fmt(Math.round(r/1e4)/100)+' МОм':r>=1e3?fmt(Math.round(r/10)/100)+' кОм':fmt(Math.round(r*100)/100)+' Ом'}
+  function hm(h){var m=Math.round(h*60);return Math.floor(m/60)+' ч '+(m%60)+' мин'}
+  function dg(){return D.map(function(c,i){return [i,c+' '+i]})}
+  var AP=[['kt','Чайник',2000,1],['fr','Холодильник',150,1],['wm','Стиральная машина',2200,1],['mw','Микроволновка',1000,1],['tv','Телевизор',150,1],['pc','Компьютер',400,1],['dw','Посудомоечная машина',2000,0],['ov','Духовка',2500,0],['st','Электроплита',7000,0],['ac','Кондиционер',1500,0],['led','Светодиодные лампы 10 Вт',10,10]];
+  var M={w_kw:function(x){return [x/1000,'кВт']},kw_w:function(x){return [x*1000,'Вт']},kw_hp:function(x){return [x*1.35962,'л.с.']},hp_kw:function(x){return [x*0.7355,'кВт']},kwh_mj:function(x){return [x*3.6,'МДж']},wh_j:function(x){return [x*3600,'Дж']},mm_d:function(x){return x>0?[2*Math.sqrt(x/Math.PI),'мм']:null},awg_mm:function(n){var d=0.127*Math.pow(92,(36-n)/39);return [Math.PI*d*d/4,'мм²']},mm_awg:function(x){return x>0?[36-39*Math.log(2*Math.sqrt(x/Math.PI)/0.127)/Math.log(92),'AWG']:null}};
+  var C=[
+  {id:'load',t:'Нагрузка квартиры',toc:'Нагрузка квартиры',l:'Укажите, сколько приборов у вас есть. Калькулятор посчитает общую мощность, ток и вводной автомат.',
+   f:AP.map(function(a){return [a[0],a[1]+'<small>'+a[2]+' Вт, шт.</small>','n',a[3]]}).concat([['k','Коэффициент одновременности<small>обычно 0,6–0,8</small>','n',0.7]]),
+   o:['Установленная мощность','Расчётный ток','Вводной автомат'],
+   fn:function(v){if(!(v.k>0))return null;var P=0;AP.forEach(function(a){P+=a[2]*v[a[0]]});var I=P*v.k/230,b=[10,16,20,25,32,40,50,63].find(function(x){return x>=I});return [fmt(Math.round(P/10)/100)+' кВт',fmt(Math.round(I*10)/10)+' А',b?b+' А':'нужна трёхфазная сеть']},
+   n:'Коэффициент одновременности учитывает, что все приборы не включают сразу. Расчёт для однофазной сети 230 В.'},
+  {id:'cost',t:'Стоимость электроэнергии',toc:'Стоимость энергии',l:'Сколько прибор расходует за месяц и во сколько это обходится.',
+   f:[['p','Мощность прибора<small>ватты, Вт</small>','n',2000],['h','Время работы в день<small>часы</small>','n',3],['c','Тариф за 1 кВт·ч<small>рубли</small>','n',6]],
+   o:['Расход в день','Расход в месяц','Стоимость в месяц','Стоимость в год'],
+   fn:function(v){var d=v.p*v.h/1000,m=d*30;return [fmt(Math.round(d*100)/100)+' кВт·ч',fmt(Math.round(m*10)/10)+' кВт·ч',fmt(Math.round(m*v.c))+' руб.',fmt(Math.round(m*v.c*12))+' руб.']},
+   n:'В месяце принято 30 дней. Тариф возьмите из своей квитанции.'},
+  {id:'res',t:'Цветовая маркировка резисторов',toc:'Резисторы',l:'Выберите цвета четырёх полос слева направо, и калькулятор покажет номинал.',
+   f:[['a','Первая полоса','s',1,dg().slice(1)],['b','Вторая полоса','s',0,dg()],['m','Множитель','s',2,dg().map(function(x){return [x[0],D[x[0]]+' (×'+fmt(Math.pow(10,x[0]))+')']}).concat([[-1,'золотой (×0,1)'],[-2,'серебряный (×0,01)']])],['t','Допуск','s',5,[[1,'коричневый ±1 %'],[2,'красный ±2 %'],[5,'золотой ±5 %'],[10,'серебряный ±10 %']]]],
+   o:['Сопротивление','Допуск','Возможный разброс'],
+   fn:function(v){var R=(10*v.a+v.b)*Math.pow(10,v.m);return [fr(R),'±'+v.t+' %',fr(R*(1-v.t/100))+' … '+fr(R*(1+v.t/100))]}},
+  {id:'res2',t:'Номинал резистора в цвета полос',l:'Введите сопротивление, и калькулятор подскажет цвета четырёх полос. Допуск ±5 % обозначает золотая полоса.',
+   f:[['r','Сопротивление','n',4700],['u','Единица','s',1,[[1,'Ом'],[1000,'кОм'],[1000000,'МОм']]]],
+   o:['Цвета полос','Округлённый номинал'],
+   fn:function(v){var R=v.r*v.u;if(!(R>=1))return null;var e=Math.floor(Math.log10(R))-1,m=Math.round(R/Math.pow(10,e));if(m>=100){m=Math.round(m/10);e++}var mc=e>=0&&e<=9?D[e]:e===-1?'золотой':e===-2?'серебряный':null;if(!mc)return null;return [D[Math.floor(m/10)]+', '+D[m%10]+', '+mc+', золотой',fr(m*Math.pow(10,e))]}},
+  {id:'dvd',t:'Делитель напряжения',toc:'Делитель напряжения',l:'Два резистора делят входное напряжение на части.',
+   f:[['u','Входное напряжение<small>вольты, В</small>','n',12],['a','Верхний резистор R1<small>омы, Ом</small>','n',10000],['b','Нижний резистор R2<small>омы, Ом</small>','n',10000]],
+   o:['Выходное напряжение','Ток делителя','Мощность делителя'],
+   fn:function(v){var s=v.a+v.b;if(!(s>0))return null;return [fmt(Math.round(v.u*v.b/s*1000)/1000)+' В',fmt(Math.round(v.u/s*1e6)/1000)+' мА',fmt(Math.round(v.u*v.u/s*1e6)/1000)+' мВт']},
+   n:'Расчёт без нагрузки: подключённая нагрузка снизит выходное напряжение.'},
+  {id:'bat',t:'Время работы от батареи',toc:'Работа от батареи',l:'Сколько прибор проработает от аккумулятора.',
+   f:[['c','Ёмкость<small>ампер-часы, А·ч</small>','n',10],['u','Напряжение<small>вольты, В</small>','n',12],['p','Мощность нагрузки<small>ватты, Вт</small>','n',20],['k','Доступная ёмкость<small>проценты: у свинцовых около 50, у литиевых 80–90</small>','n',80]],
+   o:['Энергия батареи','Ток нагрузки','Время работы'],
+   fn:function(v){if(!(v.c>0&&v.u>0&&v.p>0&&v.k>0))return null;var E=v.c*v.u;return [fmt(Math.round(E*10)/10)+' Вт·ч',fmt(Math.round(v.p/v.u*100)/100)+' А',hm(E*v.k/100/v.p)]},
+   n:'Идеальный расчёт: потери инвертора и падение ёмкости на морозе не учтены.'},
+  {id:'ph3',t:'Трёхфазная сеть: мощность и перекос',toc:'Трёхфазная сеть',l:'Токи по фазам дают мощность, перекос и ток в нулевом проводе.',
+   f:[['u','Линейное напряжение<small>вольты, В</small>','n',400],['c','Коэффициент мощности<small>cos φ</small>','n',0.9],['a','Ток фазы A<small>амперы, А</small>','n',10],['b','Ток фазы B<small>амперы, А</small>','n',12],['d','Ток фазы C<small>амперы, А</small>','n',8]],
+   o:['Активная мощность','Средний ток фазы','Перекос фаз','Ток в нулевом проводе'],
+   fn:function(v){var s=v.a+v.b+v.d,av=s/3;if(!(v.u>0&&v.c>0&&v.c<=1&&av>0))return null;var P=v.u/Math.sqrt(3)*v.c*s/1000,mx=Math.max(v.a,v.b,v.d),n=Math.sqrt(Math.max(0,v.a*v.a+v.b*v.b+v.d*v.d-v.a*v.b-v.b*v.d-v.a*v.d));return [fmt(Math.round(P*100)/100)+' кВт',fmt(Math.round(av*10)/10)+' А',fmt(Math.round((mx-av)/av*1000)/10)+' %',fmt(Math.round(n*10)/10)+' А']},
+   n:'Перекос показывает, насколько самая нагруженная фаза выше среднего. Ток в нуле посчитан при одинаковом cos φ на всех фазах.'},
+  {id:'lux',t:'Освещённость комнаты',toc:'Освещённость',l:'Сколько ламп нужно, чтобы свет в комнате был комфортным.',
+   f:[['s','Площадь комнаты<small>м²</small>','n',18],['e','Помещение','s',150,[[100,'Спальня, 100 лк'],[150,'Гостиная или кухня, 150 лк'],[50,'Коридор, 50 лк'],[100,'Ванная, 100 лк'],[300,'Рабочая зона, 300 лк']]],['f','Световой поток одной лампы<small>люмены, лм</small>','n',800],['k','Коэффициент использования<small>обычно 0,4–0,6</small>','n',0.5],['w','Светоотдача лампы<small>лм/Вт, у светодиодных около 100</small>','n',100]],
+   o:['Нужный световой поток','Количество ламп','Мощность ламп'],
+   fn:function(v){if(!(v.s>0&&v.f>0&&v.k>0&&v.w>0))return null;var F=v.e*v.s/v.k,N=Math.ceil(F/v.f);return [fmt(Math.round(F))+' лм',N+' шт.',fmt(Math.round(N*v.f/v.w))+' Вт']},
+   n:'Нормы освещённости ориентировочные. Для проекта сверяйтесь с действующими строительными нормами.'},
+  {id:'unit',t:'Перевод единиц',toc:'Единицы',l:'Мощность, энергия и размеры проводов.',
+   f:[['v','Значение','n',1],['m','Перевод','x','w_kw',[['w_kw','Вт → кВт'],['kw_w','кВт → Вт'],['kw_hp','кВт → л.с.'],['hp_kw','л.с. → кВт'],['kwh_mj','кВт·ч → МДж'],['wh_j','Вт·ч → Дж'],['mm_d','мм² → диаметр жилы, мм'],['awg_mm','AWG → мм²'],['mm_awg','мм² → AWG']]]],
+   o:['Результат'],
+   fn:function(v){var r=M[v.m](v.v);return r?[fmt(Math.round(r[0]*1000)/1000)+' '+r[1]]:null}}
+  ];
+  var anchor=document.getElementById('mk').parentNode, tocA=document.getElementById('tmk');
+  C.forEach(function(c){
+    var h='<h2 id="'+c.id+'">'+c.t+'</h2><p class="lead">'+c.l+'</p><div class="panel"><div class="grid">';
+    c.f.forEach(function(f){
+      var i=c.id+'_'+f[0];
+      h+='<div><label for="'+i+'">'+f[1]+'</label>';
+      if(f[2]==='n')h+='<input id="'+i+'" type="number" inputmode="decimal" min="0" step="any" value="'+f[3]+'">';
+      else{h+='<select id="'+i+'">';f[4].forEach(function(o){h+='<option value="'+o[0]+'"'+(String(o[0])===String(f[3])?' selected':'')+'>'+o[1]+'</option>'});h+='</select>'}
+      h+='</div>';
+    });
+    h+='</div><div class="result" aria-live="polite">';
+    c.o.forEach(function(o,k){h+='<div><b id="'+c.id+'_o'+k+'">—</b><span>'+o+'</span></div>'});
+    h+='</div>'+(c.n?'<p class="note">'+c.n+'</p>':'')+'</div>';
+    var s=document.createElement('section');s.setAttribute('aria-labelledby',c.id);s.innerHTML=h;
+    anchor.parentNode.insertBefore(s,anchor);
+    function run(){
+      var v={};
+      c.f.forEach(function(f){var e=document.getElementById(c.id+'_'+f[0]);v[f[0]]=f[2]==='x'?e.value:(parseFloat(e.value)||0)});
+      var r=null;try{r=c.fn(v)}catch(err){}
+      c.o.forEach(function(o,k){document.getElementById(c.id+'_o'+k).textContent=r?r[k]:'—'});
+    }
+    s.addEventListener('input',run);s.addEventListener('change',run);run();
+    if(c.toc&&tocA){var a=document.createElement('a');a.href='#'+c.id;a.textContent=c.toc;tocA.parentNode.insertBefore(a,tocA)}
+  });
+  function ruAll(){document.querySelectorAll('.result b').forEach(function(b){var t=b.textContent.replace(/(\d)\.(\d)/g,'$1,$2');if(t!==b.textContent)b.textContent=t})}
+  document.addEventListener('input',ruAll);document.addEventListener('change',ruAll);ruAll();
+  document.querySelectorAll('.links a[href="#"]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault()})});
+  var calm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.toc a').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      var t=document.getElementById(a.getAttribute('href').slice(1));
+      if(t)t.scrollIntoView({behavior:calm?'auto':'smooth',block:'start'});
+    });
+  });
+})();
+</script>
+<div class="dock">
+<button type="button" class="nb" id="cbtn" aria-expanded="false" aria-controls="cpanel">🧮 Калькулятор</button>
+<button type="button" class="nb" id="nbtn" aria-expanded="false" aria-controls="npanel">✎ Заметки</button>
+</div>
+<div class="np" id="npanel" role="dialog" aria-label="Заметки" hidden>
+  <div class="nh"><b>Мои заметки</b><button type="button" id="nclose" aria-label="Закрыть">✕</button></div>
+  <textarea id="ntext" placeholder="Запишите расчёты, размеры, список материалов…" aria-label="Текст заметок"></textarea>
+  <div class="nf"><span id="nstat">Сохраняется в этом браузере</span><button type="button" id="nclr">Очистить</button></div>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('nbtn'),pan=document.getElementById('npanel'),ta=document.getElementById('ntext'),st=document.getElementById('nstat'),clr=document.getElementById('nclr'),K='notes_v1',mem='',armed=false,t,bad='Хранилище недоступно: заметки пропадут при закрытии страницы';
+  function load(){try{return localStorage.getItem(K)||''}catch(e){st.textContent=bad;return mem}}
+  function save(){mem=ta.value;try{localStorage.setItem(K,ta.value);st.textContent='Сохранено в этом браузере'}catch(e){st.textContent=bad}}
+  function open(o){pan.hidden=!o;btn.setAttribute('aria-expanded',String(o));btn.textContent=o?'✕ Закрыть':'✎ Заметки';if(o)ta.focus();else btn.focus()}
+  ta.value=load();
+  btn.addEventListener('click',function(){open(pan.hidden)});
+  document.getElementById('nclose').addEventListener('click',function(){open(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!pan.hidden)open(false)});
+  ta.addEventListener('input',save);
+  clr.addEventListener('click',function(){
+    if(!armed){armed=true;clr.textContent='Точно очистить?';t=setTimeout(function(){armed=false;clr.textContent='Очистить'},3000);return}
+    clearTimeout(t);armed=false;clr.textContent='Очистить';ta.value='';save();ta.focus();
+  });
+})();
+</script>
+<div class="cp" id="cpanel" role="dialog" aria-label="Калькулятор" tabindex="-1" hidden>
+  <div class="nh"><b>Калькулятор</b><button type="button" id="cclose" aria-label="Закрыть">✕</button></div>
+  <div class="ch" id="chist"></div>
+  <div class="cd" id="cdisp" aria-live="polite">0</div>
+  <div class="ck" id="ckeys">
+    <button type="button" data-k="C">C</button><button type="button" data-k="B" aria-label="Стереть">←</button><button type="button" data-k="P">%</button><button type="button" class="op" data-k="/">÷</button>
+    <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button><button type="button" class="op" data-k="*">×</button>
+    <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" class="op" data-k="-">−</button>
+    <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" class="op" data-k="+">+</button>
+    <button type="button" data-k="S" aria-label="Сменить знак">±</button><button type="button" data-k="0">0</button><button type="button" data-k=".">,</button><button type="button" class="eq" data-k="=">=</button>
+  </div>
+</div>
+<script>
+(function(){
+  var cb=document.getElementById('cbtn'),cp=document.getElementById('cpanel'),cd=document.getElementById('cdisp'),ch=document.getElementById('chist'),nb=document.getElementById('nbtn'),np=document.getElementById('npanel');
+  var cur='0',acc=null,op=null,fresh=false,err=false,SY={'+':'+','-':'−','*':'×','/':'÷'};
+  function fm(s){return String(s).replace('.',',')}
+  function show(){cd.textContent=err?'Ошибка':fm(cur);ch.textContent=(acc!==null&&op)?fm(acc)+' '+SY[op]:''}
+  function calc(a,o,b){if(o==='+')return a+b;if(o==='-')return a-b;if(o==='*')return a*b;if(o==='/')return b===0?NaN:a/b;return b}
+  function norm(x){return isFinite(x)?String(Number(x.toPrecision(12))):null}
+  function reset(){cur='0';acc=null;op=null;fresh=false;err=false}
+  function digit(d){if(err)reset();if(fresh){cur='0';fresh=false}if(cur==='0')cur=d;else if(cur.replace(/[-.]/g,'').length<14)cur+=d;show()}
+  function dot(){if(err)reset();if(fresh){cur='0';fresh=false}if(cur.indexOf('.')<0)cur+='.';show()}
+  function oper(o){if(err)reset();var v=parseFloat(cur);if(op&&!fresh){var r=norm(calc(acc,op,v));if(r===null){err=true;show();return}acc=parseFloat(r);cur=r}else acc=v;op=o;fresh=true;show()}
+  function eq(){if(err){reset();show();return}if(!op)return;var r=norm(calc(acc,op,parseFloat(cur)));if(r===null){err=true;show();return}cur=r;acc=null;op=null;fresh=true;show()}
+  function back(){if(err)reset();else if(!fresh)cur=(cur.length>1&&!(cur.length===2&&cur[0]==='-'))?cur.slice(0,-1):'0';show()}
+  function sign(){if(err)return;if(cur!=='0')cur=cur[0]==='-'?cur.slice(1):'-'+cur;show()}
+  function pct(){if(err)return;var v=parseFloat(cur),n=norm((op&&acc!==null)?acc*v/100:v/100);if(n===null)return;cur=n;fresh=true;show()}
+  function press(k){
+    if(k.length===1&&k>='0'&&k<='9')digit(k);
+    else if(k==='.')dot();
+    else if('+-*/'.indexOf(k)>=0)oper(k);
+    else if(k==='=')eq();
+    else if(k==='C'){reset();show()}
+    else if(k==='B')back();
+    else if(k==='S')sign();
+    else if(k==='P')pct();
+  }
+  function openC(o){if(o&&!np.hidden)nb.click();cp.hidden=!o;cb.setAttribute('aria-expanded',String(o));if(o)cp.focus()}
+  cb.addEventListener('click',function(){openC(cp.hidden)});
+  document.getElementById('cclose').addEventListener('click',function(){openC(false);cb.focus()});
+  nb.addEventListener('click',function(){if(!cp.hidden)openC(false)});
+  document.getElementById('ckeys').addEventListener('click',function(e){var b=e.target.closest('button');if(b)press(b.getAttribute('data-k'))});
+  document.addEventListener('keydown',function(e){
+    if(cp.hidden)return;
+    if(e.key==='Escape'){openC(false);cb.focus();return}
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    var m={'Enter':'=','Backspace':'B','%':'P','Delete':'C'},k=e.key===','?'.':e.key,t=m[k]||((k.length===1&&'0123456789.+-*/='.indexOf(k)>=0)?k:null);
+    if(!t)return;e.preventDefault();press(t);
+  });
+  show();
+})();
+</script>
+</body>
+</html>
